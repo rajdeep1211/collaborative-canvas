@@ -93,29 +93,38 @@ io.on("connection", (socket) => {
 
   /* JOIN ROOM */
   socket.on("joinRoom", ({ code, name }) => {
+    // ❌ Do NOT auto-create room here
     if (!rooms.has(code)) {
       socket.emit("error", { message: "Room does not exist" });
       return;
     }
-
+  
     roomCode = code;
     socket.join(code);
-
+  
     const room = rooms.get(code);
-
+  
+    // ✅ SAFETY: ensure redoStack exists
+    if (!room.redoStack) {
+      room.redoStack = new Map();
+    }
+  
     const user = {
-      id: userId,
-      name: name && name.trim() ? name : "Guest",
+      id: socket.id,
+      name: name || "Guest",
       color: generateUserColor()
     };
-
-    room.users.set(userId, user);
-    room.redoStack.set(userId, []);
-
-    /* Sync state */
+  
+    room.users.set(socket.id, user);
+    room.redoStack.set(socket.id, []);
+  
+    // Send existing strokes to new user
     socket.emit("redraw", room.strokes);
+  
+    // Update all users
     io.to(code).emit("userUpdate", Array.from(room.users.values()));
   });
+  
 
   /* DRAW */
   socket.on("strokeDraw", (stroke) => {
