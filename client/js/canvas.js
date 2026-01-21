@@ -93,7 +93,8 @@ canvas.addEventListener("mousemove", e => {
   socket.emit("cursor", {
     x: e.clientX,
     y: e.clientY
-  });  
+  });
+  
 
   lastX = x;
   lastY = y;
@@ -170,8 +171,13 @@ socket.on("userUpdate", users => {
 const cursors = {};
 
 socket.on("cursor", data => {
+  // ❗ ignore your own cursor
+  if (data.userId === socket.id) return;
+
   const { userId, name, color, x, y } = data;
-  if (!userId) return;
+
+  // DEBUG (temporary)
+  console.log("REMOTE CURSOR:", data);
 
   let cursor = cursors[userId];
 
@@ -180,23 +186,27 @@ socket.on("cursor", data => {
     cursor.className = "remote-cursor";
 
     cursor.innerHTML = `
-      <div class="cursor-dot" style="background:${color}"></div>
-      <div class="cursor-label">${name}</div>
+      <div class="cursor-dot"></div>
+      <div class="cursor-label"></div>
     `;
 
     document.getElementById("remoteCursors").appendChild(cursor);
     cursors[userId] = cursor;
   }
 
+  cursor.querySelector(".cursor-dot").style.background = color;
+  cursor.querySelector(".cursor-label").textContent = name;
+
   cursor.style.transform = `translate(${x}px, ${y}px)`;
   cursor.style.opacity = "1";
 
-  clearTimeout(cursor.hideTimeout);
-  cursor.hideTimeout = setTimeout(() => {
+  clearTimeout(cursor.hideTimer);
+  cursor.hideTimer = setTimeout(() => {
     cursor.style.opacity = "0";
   }, 3000);
 });
 
+  
 
 
 function updatePing(ms) {

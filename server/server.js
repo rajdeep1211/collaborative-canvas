@@ -36,7 +36,11 @@ app.post("/api/rooms/create", (req, res) => {
     code = generateRoomCode();
   } while (rooms.has(code));
 
-  rooms.set(code, { users: new Map(), strokes: [] });
+  rooms.set(code, {
+    users: new Map(),
+    strokes: [],
+    redoStack: new Map()
+  });  
   res.json({ code });
 });
 
@@ -68,6 +72,8 @@ io.on("connection", (socket) => {
     };
   
     room.users.set(userId, user);
+    room.redoStack.set(userId, []);
+
   
     // Send initial state
     socket.emit("redraw", room.strokes);
@@ -80,6 +86,7 @@ io.on("connection", (socket) => {
 
     const room = rooms.get(roomCode);
     room.strokes.push({ ...stroke, userId });
+    room.redoStack.set(userId, []);
     socket.to(roomCode).emit("strokeDraw", stroke);
   });
 
@@ -127,18 +134,20 @@ io.on("connection", (socket) => {
     if (!roomCode) return;
   
     const room = rooms.get(roomCode);
-    const user = room.users.get(userId);
+    if (!room) return;
   
+    const user = room.users.get(socket.id);
     if (!user) return;
   
     socket.to(roomCode).emit("cursor", {
-      userId,
+      userId: socket.id,
       name: user.name,
       color: user.color,
       x,
       y
     });
   });
+  
   
   
   
