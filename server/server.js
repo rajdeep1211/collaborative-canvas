@@ -58,9 +58,10 @@ app.get("/canvas", (req, res) => {
 });
 
 /* Refresh-safe fallback */
-app.get("*", (req, res) => {
-  res.redirect("/");
+app.use((req, res) => {
+  res.status(404).json({ error: "Route not found" });
 });
+
 
 /* =========================
    API ROUTES

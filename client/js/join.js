@@ -81,13 +81,22 @@ createRoomBtn?.addEventListener("click", async () => {
 });
 
 async function validateRoomOnServer(code) {
-  const res = await fetch(`/api/rooms/validate?code=${code}`);
+  try {
+    const res = await fetch(`/api/rooms/validate?code=${code}`);
 
-  if (!res.ok) return false;
+    if (!res.ok) {
+      return false;
+    }
 
-  const data = await res.json();
-  return data.exists === true;
+    const data = await res.json();
+    return data.exists === true;
+
+  } catch (err) {
+    console.error("Validate room failed:", err);
+    return false;
+  }
 }
+
 
 function triggerError(message) {
   errorMsg.textContent = message;
