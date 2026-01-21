@@ -99,6 +99,11 @@ Conclusion
 DrawTogether demonstrates the practical implementation of real-time collaborative systems using WebSockets.
 The project highlights key concepts such as event-driven communication, shared state management, and concurrent user interaction in modern web applications.
 
+Live Demo
+Heroku is no longer free and Vercel does not support WebSockets.
+This application is best tested locally.
+Full setup instructions are provided above and the project has been
+tested locally with multiple users across different browsers.
 
 
 
