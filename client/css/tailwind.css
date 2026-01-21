@@ -1,0 +1,223 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom CSS Variables */
+:root {
+  --color-purple: #9333ea;
+  --color-blue: #3b82f6;
+  --color-green: #10b981;
+  --color-orange: #f97316;
+  --color-light: #FAFAFA;
+  --color-dark: #111827;
+}
+
+/* Base Styles */
+@layer base {
+  body {
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    scroll-padding-top: 5rem;
+  }
+}
+
+/* Dot Grid Background */
+.dot-grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(circle, #d1d5db 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Reveal Animation */
+.reveal-text {
+  overflow: hidden;
+  display: block;
+}
+
+.reveal-inner {
+  display: block;
+  transform: translateY(110%);
+  animation: reveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes reveal {
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+/* Drawing Path Animation */
+.drawing-path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 3s ease-in-out forwards infinite;
+}
+
+@keyframes draw {
+  0% {
+    stroke-dashoffset: 1000;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  50% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -1000;
+    opacity: 0;
+  }
+}
+
+/* Cursor Indicators */
+.cursor-indicator {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  animation: moveCursor 8s ease-in-out infinite;
+}
+
+.cursor-purple {
+  background: var(--color-purple);
+  animation-delay: 0s;
+  top: 50%;
+  left: 12%;
+}
+
+.cursor-blue {
+  background: var(--color-blue);
+  animation-delay: 0.3s;
+  top: 62%;
+  left: 18%;
+}
+
+.cursor-green {
+  background: var(--color-green);
+  animation-delay: 0.6s;
+  top: 45%;
+  left: 25%;
+}
+
+.cursor-orange {
+  background: var(--color-orange);
+  animation-delay: 0.9s;
+  top: 75%;
+  left: 15%;
+}
+
+@keyframes moveCursor {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(200px, -30px);
+  }
+  50% {
+    transform: translate(400px, 20px);
+  }
+  75% {
+    transform: translate(200px, 40px);
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .cursor-indicator {
+    width: 14px;
+    height: 14px;
+  }
+
+  @keyframes moveCursor {
+    0%, 100% {
+      transform: translate(0, 0);
+    }
+    25% {
+      transform: translate(80px, -20px);
+    }
+    50% {
+      transform: translate(160px, 10px);
+    }
+    75% {
+      transform: translate(80px, 30px);
+    }
+  }
+}
+
+/* Pulse Animation for Status Indicator */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Hover Effects */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Backdrop Blur Support */
+@supports ((-webkit-backdrop-filter: blur(12px)) or (backdrop-filter: blur(12px))) {
+  .backdrop-blur-md {
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+}

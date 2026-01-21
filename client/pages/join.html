@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Join Room | DrawTogether</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/css/join.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-left">
+      <div class="logo">✏️</div>
+      <span class="brand">DrawTogether</span>
+    </div>
+
+    <div class="nav-right">
+      <a href="#">GitHub</a>
+      <a href="#">Home</a>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="page">
+
+    <div class="card">
+
+      <div class="card-header">
+        <div class="icon-box">👥</div>
+        <h1>Join a Drawing Room</h1>
+        <p>Enter a room code to start collaborating</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="form-group">
+        <label>Room Code</label>
+        <input type="text" id="roomCode" placeholder="XXXX-XXXX" maxlength="9"/>
+        <p class="error" id="errorMsg"></p>
+        <p class="hint">ⓘ Share this room code with others to draw together</p>
+      </div>
+
+      <button class="primary-btn" id="joinBtn">
+        Join Room <span>→</span>
+      </button>      
+
+      <div class="or">
+        <span></span>
+        <p>or</p>
+        <span></span>
+      </div>
+
+      <button class="secondary-btn" id="createRoomBtn">
+        + Create New Room
+      </button>      
+
+      <div class="info-box">
+        <strong>No account required</strong>
+        <p>
+          Start drawing with your team instantly. Just share the room code
+          and collaborate in real-time.
+        </p>
+      </div>
+
+    </div>
+
+    <a class="back" href="/index.html">← Back to Home</a>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-logo">✏️</div>
+    <p>© 2026 DrawTogether. MIT Licensed.</p>
+  </footer>
+
+  <script src="../js/join.js"></script>
+
+
+</body>
+</html>

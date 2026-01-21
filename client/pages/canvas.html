@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Canvas | DrawTogether</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/canvas.css">
+
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+
+<header class="top-bar">
+  <div class="brand">
+    <div class="logo">✏️</div>
+    <span>DrawTogether</span>
+  </div>
+
+  <div class="room-status">
+    <div class="room-id" id="roomId">ROOM</div>
+    <div class="status connected">
+        ● Connected
+        <span id="pingValue" class="ping">-- ms</span>
+      </div>      
+  </div>
+</header>
+
+<aside class="toolbar">
+  <button id="brushBtn" class="active">✏️</button>
+  <button id="eraserBtn">🧽</button>
+  <input type="color" id="colorPicker" />
+  <input type="range" id="strokeWidth" min="1" max="20" value="3" />
+  <button id="undoBtn">↩</button>
+</aside>
+
+<aside class="users-panel">
+  <div class="users-header">
+    Online Users
+    <span id="userCount">0</span>
+  </div>
+  <div id="usersList"></div>
+</aside>
+
+<main>
+  <canvas id="drawingCanvas"></canvas>
+  <div id="remoteCursors"></div>
+</main>
+
+<script src="../js/canvas.js"></script>
+</body>
+</html>

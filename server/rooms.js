@@ -1,11 +1,79 @@
-class RoomManager {
-    constructor() {
-        this.room = 'global';  // Single room for simplicity
-    }
+const DrawingState = require("./drawing-state");
 
-    getRoom() {
-        return this.room;
+class RoomManager {
+  constructor() {
+    // Map<roomCode, DrawingState>
+    this.rooms = new Map();
+  }
+
+  /* =========================
+     ROOM CODE GENERATION
+  ========================= */
+
+  generateRoomCode() {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    const part = () =>
+      Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+
+    return `${part()}-${part()}`;
+  }
+
+  /* =========================
+     CREATE ROOM
+  ========================= */
+
+  createRoom() {
+    let code;
+
+    do {
+      code = this.generateRoomCode();
+    } while (this.rooms.has(code));
+
+    this.rooms.set(code, new DrawingState());
+    return code;
+  }
+
+  /* =========================
+     VALIDATE ROOM
+  ========================= */
+
+  roomExists(code) {
+    return this.rooms.has(code);
+  }
+
+  /* =========================
+     GET ROOM STATE
+  ========================= */
+
+  getRoomState(code) {
+    return this.rooms.get(code);
+  }
+
+  /* =========================
+     JOIN ROOM
+  ========================= */
+
+  joinRoom(code, userId) {
+    if (!this.rooms.has(code)) return null;
+    return this.rooms.get(code);
+  }
+
+  /* =========================
+     LEAVE ROOM
+  ========================= */
+
+  leaveRoom(code, userId) {
+    const state = this.rooms.get(code);
+    if (!state) return;
+
+    state.removeUser(userId);
+
+    // delete room if empty
+    if (state.getUsers().length === 0) {
+      this.rooms.delete(code);
     }
+  }
 }
 
 module.exports = RoomManager;
