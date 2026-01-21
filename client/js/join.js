@@ -64,6 +64,9 @@ createRoomBtn?.addEventListener("click", async () => {
   try {
     const res = await fetch("/api/rooms/create", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      }
     });
 
     if (!res.ok) throw new Error("API failed");

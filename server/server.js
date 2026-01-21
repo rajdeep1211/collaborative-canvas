@@ -46,9 +46,6 @@ const rooms = new Map();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "../client")));
 
-/* =========================
-   ROUTES (FIX 3)
-========================= */
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../client/pages/join.html"));
 });
@@ -57,15 +54,7 @@ app.get("/canvas", (req, res) => {
   res.sendFile(path.join(__dirname, "../client/pages/canvas.html"));
 });
 
-/* Refresh-safe fallback */
-app.use((req, res) => {
-  res.status(404).json({ error: "Route not found" });
-});
-
-
-/* =========================
-   API ROUTES
-========================= */
+// ✅ API
 app.post("/api/rooms/create", (req, res) => {
   let code;
   do {
@@ -84,6 +73,7 @@ app.post("/api/rooms/create", (req, res) => {
 app.get("/api/rooms/validate", (req, res) => {
   res.json({ exists: rooms.has(req.query.code) });
 });
+
 
 /* =========================
    SOCKET LOGIC
