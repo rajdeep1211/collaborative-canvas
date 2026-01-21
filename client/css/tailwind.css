@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom CSS Variables */
 :root {
   --color-purple: #9333ea;
   --color-blue: #3b82f6;
@@ -12,7 +11,6 @@
   --color-dark: #111827;
 }
 
-/* Base Styles */
 @layer base {
   body {
     font-feature-settings: "ss01", "ss02", "cv01", "cv02";
@@ -25,7 +23,6 @@
   }
 }
 
-/* Dot Grid Background */
 .dot-grid {
   position: fixed;
   top: 0;
@@ -39,7 +36,6 @@
   z-index: 0;
 }
 
-/* Reveal Animation */
 .reveal-text {
   overflow: hidden;
   display: block;
@@ -57,7 +53,6 @@
   }
 }
 
-/* Fade In Animation */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -73,7 +68,6 @@
   animation: fadeIn 0.8s ease-out forwards;
 }
 
-/* Drawing Path Animation */
 .drawing-path {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
@@ -97,7 +91,6 @@
   }
 }
 
-/* Cursor Indicators */
 .cursor-indicator {
   position: absolute;
   width: 20px;
@@ -152,7 +145,6 @@
   }
 }
 
-/* Responsive Adjustments */
 @media (max-width: 768px) {
   .cursor-indicator {
     width: 14px;
@@ -175,7 +167,6 @@
   }
 }
 
-/* Pulse Animation for Status Indicator */
 @keyframes pulse {
   0%, 100% {
     opacity: 1;
@@ -185,7 +176,6 @@
   }
 }
 
-/* Hover Effects */
 .hover-lift {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -195,7 +185,6 @@
   box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.1);
 }
 
-/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -214,7 +203,6 @@
   background: #9ca3af;
 }
 
-/* Backdrop Blur Support */
 @supports ((-webkit-backdrop-filter: blur(12px)) or (backdrop-filter: blur(12px))) {
   .backdrop-blur-md {
     -webkit-backdrop-filter: blur(12px);

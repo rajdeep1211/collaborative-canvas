@@ -6,9 +6,7 @@ class RoomManager {
     this.rooms = new Map();
   }
 
-  /* =========================
-     ROOM CODE GENERATION
-  ========================= */
+ 
 
   generateRoomCode() {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -19,9 +17,7 @@ class RoomManager {
     return `${part()}-${part()}`;
   }
 
-  /* =========================
-     CREATE ROOM
-  ========================= */
+
 
   createRoom() {
     let code;
@@ -34,34 +30,18 @@ class RoomManager {
     return code;
   }
 
-  /* =========================
-     VALIDATE ROOM
-  ========================= */
-
   roomExists(code) {
     return this.rooms.has(code);
   }
-
-  /* =========================
-     GET ROOM STATE
-  ========================= */
 
   getRoomState(code) {
     return this.rooms.get(code);
   }
 
-  /* =========================
-     JOIN ROOM
-  ========================= */
-
   joinRoom(code, userId) {
     if (!this.rooms.has(code)) return null;
     return this.rooms.get(code);
   }
-
-  /* =========================
-     LEAVE ROOM
-  ========================= */
 
   leaveRoom(code, userId) {
     const state = this.rooms.get(code);

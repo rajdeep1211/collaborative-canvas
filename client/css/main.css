@@ -2211,7 +2211,6 @@ html {
   }
 }
 
-/* Responsive Adjustments */
 
 @media (max-width: 768px) {
   .cursor-indicator {
@@ -2238,7 +2237,6 @@ html {
   }
 }
 
-/* Pulse Animation for Status Indicator */
 
 @keyframes pulse {
   0%, 100% {
@@ -2250,7 +2248,6 @@ html {
   }
 }
 
-/* Hover Effects */
 
 .hover-lift {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -2261,7 +2258,6 @@ html {
   box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.1);
 }
 
-/* Custom Scrollbar */
 
 ::-webkit-scrollbar {
   width: 8px;
@@ -2280,8 +2276,6 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
 }
-
-/* Backdrop Blur Support */
 
 @supports ((-webkit-backdrop-filter: blur(12px)) or (backdrop-filter: blur(12px))) {
   .backdrop-blur-md {

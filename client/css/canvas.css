@@ -9,7 +9,6 @@
     overflow: hidden;
   }
   
-  /* ===== TOP BAR ===== */
   .top-bar {
     height: 60px;
     background: white;
@@ -48,7 +47,6 @@
     border-radius: 8px;
   }
   
-  /* ===== TOOLBAR ===== */
   .toolbar {
     position: fixed;
     top: 90px;
@@ -107,7 +105,6 @@
     font-weight: 600;
   }
   
-  /* ===== CANVAS ===== */
   main {
     height: calc(100vh - 60px);
   }
@@ -119,10 +116,9 @@
     position: absolute;
     top: 60px;
     left: 0;
-    z-index: 1; /* canvas stays below UI */
+    z-index: 1;
   }
   
-  /* ===== REMOTE CURSORS ===== */
   #remoteCursors {
     position: absolute;
     inset: 0;
@@ -153,7 +149,6 @@
     text-align: center;
   }
   
-  /* ===== PING ===== */
   .ping {
     margin-left: 8px;
     font-size: 12px;

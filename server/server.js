@@ -14,8 +14,6 @@ function generateUserColor() {
   return `hsl(${hue}, 70%, 55%)`;
 }
 
-
-// roomCode -> { users: Map, strokes: [] }
 const rooms = new Map();
 
 app.use(express.static(path.join(__dirname, "../client")));
@@ -75,7 +73,6 @@ io.on("connection", (socket) => {
     room.redoStack.set(userId, []);
 
   
-    // Send initial state
     socket.emit("redraw", room.strokes);
     io.to(code).emit("userUpdate", Array.from(room.users.values()));
   });
@@ -95,7 +92,6 @@ io.on("connection", (socket) => {
   
     const room = rooms.get(roomCode);
   
-    // find last strokeId by this user
     let lastStrokeId = null;
   
     for (let i = room.strokes.length - 1; i >= 0; i--) {

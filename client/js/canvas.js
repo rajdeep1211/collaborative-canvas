@@ -3,10 +3,6 @@ const ctx = canvas.getContext("2d");
 const socket = io();
 const pingEl = document.getElementById("pingValue");
 
-
-// =======================
-// CANVAS SETUP
-// =======================
 function resize() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight - 60;
@@ -14,9 +10,6 @@ function resize() {
 resize();
 window.addEventListener("resize", resize);
 
-// =======================
-// ROOM
-// =======================
 const params = new URLSearchParams(window.location.search);
 const ROOM_CODE = params.get("code");
 document.getElementById("roomId").textContent = ROOM_CODE;
@@ -31,9 +24,6 @@ if (!USER_NAME) {
 
 socket.emit("joinRoom", { code: ROOM_CODE, name: USER_NAME });
 
-// =======================
-// STATE
-// =======================
 let isDrawing = false;
 let tool = "brush";
 let color = "#000000";
@@ -42,17 +32,11 @@ let lastX = 0;
 let lastY = 0;
 let currentStrokeId = null;
 
-// =======================
-// TOOLS
-// =======================
 document.getElementById("brushBtn").onclick = () => tool = "brush";
 document.getElementById("eraserBtn").onclick = () => tool = "eraser";
 document.getElementById("colorPicker").oninput = e => color = e.target.value;
 document.getElementById("strokeWidth").oninput = e => width = +e.target.value;
 
-// =======================
-// DRAWING
-// =======================
 canvas.addEventListener("mousedown", e => {
   isDrawing = true;
   lastX = e.offsetX;
@@ -100,9 +84,6 @@ canvas.addEventListener("mousemove", e => {
   lastY = y;
 });
 
-// =======================
-// DRAW FUNCTION
-// =======================
 function drawLine(x1, y1, x2, y2, tool, color, width) {
   ctx.beginPath();
   ctx.moveTo(x1, y1);
@@ -120,16 +101,10 @@ function drawLine(x1, y1, x2, y2, tool, color, width) {
   ctx.stroke();
 }
 
-// =======================
-// REMOTE DRAW
-// =======================
 socket.on("strokeDraw", d => {
   drawLine(d.x1, d.y1, d.x2, d.y2, d.tool, d.color, d.width);
 });
 
-// =======================
-// REDRAW (UNDO)
-// =======================
 socket.on("redraw", strokes => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   strokes.forEach(s => {
@@ -137,16 +112,10 @@ socket.on("redraw", strokes => {
   });
 });
 
-// =======================
-// UNDO
-// =======================
 document.getElementById("undoBtn").onclick = () => {
   socket.emit("undo");
 };
 
-// =======================
-// USERS
-// =======================
 socket.on("userUpdate", users => {
   const list = document.getElementById("usersList");
   document.getElementById("userCount").textContent = users.length;
@@ -164,19 +133,12 @@ socket.on("userUpdate", users => {
     list.appendChild(el);
   });
 });
-
-// =======================
-// CURSORS
-// =======================
 const cursors = {};
 
 socket.on("cursor", data => {
-  // ❗ ignore your own cursor
   if (data.userId === socket.id) return;
 
   const { userId, name, color, x, y } = data;
-
-  // DEBUG (temporary)
   console.log("REMOTE CURSOR:", data);
 
   let cursor = cursors[userId];
@@ -193,7 +155,6 @@ socket.on("cursor", data => {
     document.getElementById("remoteCursors").appendChild(cursor);
     cursors[userId] = cursor;
   }
-
   cursor.querySelector(".cursor-dot").style.background = color;
   cursor.querySelector(".cursor-label").textContent = name;
 
@@ -206,9 +167,6 @@ socket.on("cursor", data => {
   }, 3000);
 });
 
-  
-
-
 function updatePing(ms) {
     pingEl.textContent = `${ms} ms`;
     pingEl.className = "ping";
@@ -217,8 +175,6 @@ function updatePing(ms) {
     else if (ms < 250) pingEl.classList.add("medium");
     else pingEl.classList.add("bad");
   }
-  
-  // Measure ping using Socket.IO
   setInterval(() => {
     const start = Date.now();
   

@@ -1,24 +1,13 @@
-// =========================
-// DEBUG (STEP 3)
-// =========================
-console.log("join.js loaded");
 
-// =========================
-// DOM ELEMENTS
-// =========================
+console.log("join.js loaded");
 const input = document.getElementById("roomCode");
 const joinBtn = document.getElementById("joinBtn");
 const createRoomBtn = document.getElementById("createRoomBtn");
 const errorMsg = document.getElementById("errorMsg");
 
-// Safety check (VERY IMPORTANT)
 if (!joinBtn || !createRoomBtn || !input) {
   console.error("Required DOM elements not found");
 }
-
-// =========================
-// AUTO FORMAT XXXX-XXXX
-// =========================
 input?.addEventListener("input", () => {
   let value = input.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
 
@@ -30,9 +19,6 @@ input?.addEventListener("input", () => {
   hideError();
 });
 
-// =========================
-// JOIN ROOM
-// =========================
 joinBtn?.addEventListener("click", async () => {
   console.log("Join Room clicked");
 
@@ -70,9 +56,6 @@ joinBtn?.addEventListener("click", async () => {
   }
 });
 
-// =========================
-// CREATE NEW ROOM
-// =========================
 createRoomBtn?.addEventListener("click", async () => {
   console.log("Create New Room clicked");
 
@@ -97,9 +80,6 @@ createRoomBtn?.addEventListener("click", async () => {
   }
 });
 
-// =========================
-// SERVER VALIDATION API
-// =========================
 async function validateRoomOnServer(code) {
   const res = await fetch(`/api/rooms/validate?code=${code}`);
 
@@ -109,16 +89,13 @@ async function validateRoomOnServer(code) {
   return data.exists === true;
 }
 
-// =========================
-// UI HELPERS
-// =========================
 function triggerError(message) {
   errorMsg.textContent = message;
   errorMsg.style.display = "block";
 
   const card = document.querySelector(".card");
   card.classList.remove("shake");
-  void card.offsetWidth; // restart animation
+  void card.offsetWidth;
   card.classList.add("shake");
 }
 
