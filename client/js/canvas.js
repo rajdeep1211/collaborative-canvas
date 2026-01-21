@@ -1,6 +1,9 @@
 const canvas = document.getElementById("drawingCanvas");
 const ctx = canvas.getContext("2d");
-const socket = io();
+const socket = io({
+  transports: ["websocket", "polling"]
+});
+
 const pingEl = document.getElementById("pingValue");
 
 function resize() {

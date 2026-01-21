@@ -5,28 +5,66 @@ const path = require("path");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
 
+/* =========================
+   SOCKET.IO (Render-safe)
+========================= */
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  },
+  transports: ["websocket", "polling"]
+});
 
+/* =========================
+   HELPERS
+========================= */
 function generateUserColor() {
   const hue = Math.floor(Math.random() * 360);
   return `hsl(${hue}, 70%, 55%)`;
 }
 
-const rooms = new Map();
-
-app.use(express.static(path.join(__dirname, "../client")));
-app.use(express.json());
-
-
-
 function generateRoomCode() {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   const part = () =>
-    Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+    Array.from({ length: 4 }, () =>
+      chars[Math.floor(Math.random() * chars.length)]
+    ).join("");
   return `${part()}-${part()}`;
 }
 
+/* =========================
+   IN-MEMORY STORE
+========================= */
+// roomCode -> { users: Map, strokes: [], redoStack: Map }
+const rooms = new Map();
+
+/* =========================
+   EXPRESS MIDDLEWARE
+========================= */
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "../client")));
+
+/* =========================
+   ROUTES (FIX 3)
+========================= */
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/pages/join.html"));
+});
+
+app.get("/canvas", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/pages/canvas.html"));
+});
+
+/* Refresh-safe fallback */
+app.get("*", (req, res) => {
+  res.redirect("/");
+});
+
+/* =========================
+   API ROUTES
+========================= */
 app.post("/api/rooms/create", (req, res) => {
   let code;
   do {
@@ -37,7 +75,8 @@ app.post("/api/rooms/create", (req, res) => {
     users: new Map(),
     strokes: [],
     redoStack: new Map()
-  });  
+  });
+
   res.json({ code });
 });
 
@@ -45,111 +84,124 @@ app.get("/api/rooms/validate", (req, res) => {
   res.json({ exists: rooms.has(req.query.code) });
 });
 
+/* =========================
+   SOCKET LOGIC
+========================= */
 io.on("connection", (socket) => {
   let roomCode = null;
   const userId = socket.id;
 
+  /* JOIN ROOM */
   socket.on("joinRoom", ({ code, name }) => {
     if (!rooms.has(code)) {
-      rooms.set(code, {
-        users: new Map(),
-        strokes: []
-      });
+      socket.emit("error", { message: "Room does not exist" });
+      return;
     }
-  
+
     roomCode = code;
     socket.join(code);
-  
+
     const room = rooms.get(code);
-  
+
     const user = {
       id: userId,
-      name: name || "Guest",
+      name: name && name.trim() ? name : "Guest",
       color: generateUserColor()
     };
-  
+
     room.users.set(userId, user);
     room.redoStack.set(userId, []);
 
-  
+    /* Sync state */
     socket.emit("redraw", room.strokes);
     io.to(code).emit("userUpdate", Array.from(room.users.values()));
   });
-  
 
+  /* DRAW */
   socket.on("strokeDraw", (stroke) => {
     if (!roomCode) return;
 
     const room = rooms.get(roomCode);
+    if (!room) return;
+
+    // Ensure strokeId exists (CRITICAL for undo)
+    if (!stroke.strokeId) {
+      stroke.strokeId = `${Date.now()}-${Math.random()}`;
+    }
+
     room.strokes.push({ ...stroke, userId });
     room.redoStack.set(userId, []);
+
     socket.to(roomCode).emit("strokeDraw", stroke);
   });
 
+  /* UNDO (per-user, partial) */
   socket.on("undo", () => {
     if (!roomCode) return;
-  
+
     const room = rooms.get(roomCode);
-  
-    let lastStrokeId = null;
-  
+    if (!room) return;
+
     for (let i = room.strokes.length - 1; i >= 0; i--) {
       if (room.strokes[i].userId === userId) {
-        lastStrokeId = room.strokes[i].strokeId;
+        room.strokes.splice(i, 1);
         break;
       }
     }
-  
-    console.log("UNDO REQUEST → strokeId:", lastStrokeId);
-  
-    if (!lastStrokeId) return;
-  
-    room.strokes = room.strokes.filter(
-      s => !(s.userId === userId && s.strokeId === lastStrokeId)
-    );
-  
+
     io.to(roomCode).emit("redraw", room.strokes);
   });
-  
 
-  socket.on("disconnect", () => {
-    if (!roomCode) return;
-
-    const room = rooms.get(roomCode);
-    room.users.delete(userId);
-    io.to(roomCode).emit("userUpdate", Array.from(room.users.values()));
-
-    if (room.users.size === 0) rooms.delete(roomCode);
-  });
-  socket.on("ping-check", (cb) => {
-    if (cb) cb();
-  });
-
+  /* CURSOR */
   socket.on("cursor", ({ x, y }) => {
     if (!roomCode) return;
-  
+
     const room = rooms.get(roomCode);
     if (!room) return;
-  
-    const user = room.users.get(socket.id);
+
+    const user = room.users.get(userId);
     if (!user) return;
-  
+
     socket.to(roomCode).emit("cursor", {
-      userId: socket.id,
+      userId,
       name: user.name,
       color: user.color,
       x,
       y
     });
   });
-  
-  
-  
-  
+
+  /* PING */
+  socket.on("ping-check", (cb) => {
+    if (typeof cb === "function") cb();
+  });
+
+  /* DISCONNECT */
+  socket.on("disconnect", () => {
+    if (!roomCode) return;
+
+    const room = rooms.get(roomCode);
+    if (!room) return;
+
+    room.users.delete(userId);
+    room.redoStack.delete(userId);
+
+    io.to(roomCode).emit(
+      "userUpdate",
+      Array.from(room.users.values())
+    );
+
+    if (room.users.size === 0) {
+      rooms.delete(roomCode);
+    }
+  });
 });
+
+/* =========================
+   START SERVER
+========================= */
 const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log("Server running on port", PORT);
 });
-
